@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 interface HeaderProps {
   loading: boolean;
@@ -7,6 +7,7 @@ interface HeaderProps {
   setNewTodo: (value: string) => void;
   inputRef: React.RefObject<HTMLInputElement>;
   onAddTodo: () => void;
+  setAppError: (message: string) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -14,18 +15,16 @@ export const Header: React.FC<HeaderProps> = ({
   setNewTodo,
   inputRef,
   onAddTodo,
+  setAppError,
 }) => {
-  const [error, setError] = useState<string | null>(null);
-
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       if (newTodo.trim() === '') {
-        setError('Поле не може бути порожнім або містити лише пробіли!');
+        setAppError('Поле не може бути порожнім або містити лише пробіли!');
 
         return;
       }
 
-      setError(null);
       onAddTodo();
     }
   };
@@ -42,7 +41,6 @@ export const Header: React.FC<HeaderProps> = ({
         onKeyDown={handleKeyDown}
         ref={inputRef}
       />
-      {error && <p className="error-message">{error}</p>}
     </header>
   );
 };

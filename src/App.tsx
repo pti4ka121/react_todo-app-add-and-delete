@@ -16,6 +16,10 @@ export const App: React.FC = () => {
   const [newTodo, setNewTodo] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const setAppError = (message: string) => {
+    setErrorMessage(message);
+  };
+
   const loadTodos = async () => {
     setLoading(true);
     setErrorMessage('');
@@ -24,7 +28,7 @@ export const App: React.FC = () => {
 
       setTodos(todosData);
     } catch (error) {
-      setErrorMessage('Unable to load todos');
+      setAppError('Unable to load todos');
     } finally {
       setLoading(false);
     }
@@ -52,6 +56,8 @@ export const App: React.FC = () => {
 
   const handleAddTodo = () => {
     if (!newTodo.trim()) {
+      setAppError('Task cannot be empty.');
+
       return;
     }
 
@@ -94,6 +100,7 @@ export const App: React.FC = () => {
           setNewTodo={setNewTodo}
           inputRef={inputRef}
           onAddTodo={handleAddTodo}
+          setAppError={setAppError}
         />
 
         <TodoList
