@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface HeaderProps {
   loading: boolean;
@@ -15,8 +15,17 @@ export const Header: React.FC<HeaderProps> = ({
   inputRef,
   onAddTodo,
 }) => {
+  const [error, setError] = useState<string | null>(null);
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
+      if (newTodo.trim() === '') {
+        setError('Поле не може бути порожнім або містити лише пробіли!');
+
+        return;
+      }
+
+      setError(null);
       onAddTodo();
     }
   };
@@ -24,7 +33,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="todoapp__header">
       <input
-      data-cy="NewTodoField"
+        data-cy="NewTodoField"
         type="text"
         className="todoapp__new-todo"
         placeholder="What needs to be done?"
@@ -33,6 +42,7 @@ export const Header: React.FC<HeaderProps> = ({
         onKeyDown={handleKeyDown}
         ref={inputRef}
       />
+      {error && <p className="error-message">{error}</p>}
     </header>
   );
 };
