@@ -17,30 +17,31 @@ export const Header: React.FC<HeaderProps> = ({
   onAddTodo,
   setAppError,
 }) => {
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      if (newTodo.trim() === '') {
-        setAppError('Поле не може бути порожнім або містити лише пробіли!');
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
 
-        return;
-      }
+    if (newTodo.trim() === '') {
+      setAppError('Поле не може бути порожнім або містити лише пробіли!');
 
-      onAddTodo();
+      return;
     }
+
+    onAddTodo();
   };
 
   return (
     <header className="todoapp__header">
-      <input
-        data-cy="NewTodoField"
-        type="text"
-        className="todoapp__new-todo"
-        placeholder="What needs to be done?"
-        value={newTodo}
-        onChange={e => setNewTodo(e.target.value)}
-        onKeyDown={handleKeyDown}
-        ref={inputRef}
-      />
+      <form onSubmit={handleSubmit}>
+        <input
+          data-cy="NewTodoField"
+          type="text"
+          className="todoapp__new-todo"
+          placeholder="What needs to be done?"
+          value={newTodo}
+          onChange={e => setNewTodo(e.target.value)}
+          ref={inputRef}
+        />
+      </form>
     </header>
   );
 };
