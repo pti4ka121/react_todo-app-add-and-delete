@@ -20,8 +20,8 @@ export const Header: React.FC<HeaderProps> = ({
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (newTodo.trim() === '') {
-      setAppError('Поле не може бути порожнім або містити лише пробіли!');
+    if (!newTodo.trim()) {
+      setAppError('Title should not be empty');
 
       return;
     }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { getTodos } from './api/todos';
 import { Todo } from './types/Todo';
 import { Header } from './components/Header';
@@ -20,7 +20,7 @@ export const App: React.FC = () => {
     setErrorMessage(message);
   };
 
-  const loadTodos = async () => {
+  const loadTodos = useCallback(async () => {
     setLoading(true);
     setErrorMessage('');
     try {
@@ -32,11 +32,11 @@ export const App: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadTodos();
-  }, []);
+  }, [loadTodos]);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -56,7 +56,7 @@ export const App: React.FC = () => {
 
   const handleAddTodo = () => {
     if (!newTodo.trim()) {
-      setAppError('Task cannot be empty.');
+      setAppError('Title should not be empty');
 
       return;
     }
