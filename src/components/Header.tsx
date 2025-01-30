@@ -11,6 +11,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({
+  loading,
   newTodo,
   setNewTodo,
   inputRef,
@@ -40,6 +41,7 @@ export const Header: React.FC<HeaderProps> = ({
           value={newTodo}
           onChange={e => setNewTodo(e.target.value)}
           ref={inputRef}
+          disabled={loading}
         />
       </form>
     </header>

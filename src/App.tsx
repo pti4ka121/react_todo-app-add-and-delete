@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { getTodos } from './api/todos';
+import { createTodo, getTodos } from './api/todos';
 import { Todo } from './types/Todo';
 import { Header } from './components/Header';
 import { TodoList } from './components/TodoList';
@@ -23,6 +23,7 @@ export const App: React.FC = () => {
   const loadTodos = useCallback(async () => {
     setLoading(true);
     setErrorMessage('');
+
     try {
       const todosData = await getTodos();
 
@@ -39,10 +40,10 @@ export const App: React.FC = () => {
   }, [loadTodos]);
 
   useEffect(() => {
-    if (inputRef.current) {
+    if (!loading && inputRef.current) {
       inputRef.current.focus();
     }
-  }, []);
+  }, [loading]);
 
   useEffect(() => {
     if (errorMessage) {
@@ -54,7 +55,7 @@ export const App: React.FC = () => {
     }
   }, [errorMessage]);
 
-  const handleAddTodo = () => {
+  const handleAddTodo = async () => {
     if (!newTodo.trim()) {
       setAppError('Title should not be empty');
 
@@ -68,8 +69,29 @@ export const App: React.FC = () => {
       userId: 1,
     };
 
-    setTodos([...todos, newTask]);
-    setNewTodo('');
+    setTodos(prevTodos => [...prevTodos, newTask]);
+
+    setLoading(true);
+
+    try {
+      const createdTodo = await createTodo(newTask.title);
+
+      setTodos(prevTodos =>
+        prevTodos.map(todo => (todo.id === newTask.id ? createdTodo : todo)),
+      );
+
+      setNewTodo('');
+
+      if (typeof window.createCallback === 'function') {
+        window.createCallback();
+      }
+    } catch (error) {
+      setAppError('Unable to add todo');
+
+      setTodos(prevTodos => prevTodos.filter(todo => todo.id !== newTask.id));
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDeleteTodo = (id: number) => {
@@ -93,6 +115,9 @@ export const App: React.FC = () => {
       <h1 className="todoapp__title">todos</h1>
 
       <div className="todoapp__content">
+        {loading && todos.length === 0 && (
+          <div className="modal overlay is-active">Loading...</div>
+        )}
         <Header
           loading={loading}
           todosLeft={todos.filter(todo => !todo.completed).length}
