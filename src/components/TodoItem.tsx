@@ -7,7 +7,7 @@ type Props = {
   nodeRef?: RefObject<HTMLDivElement>;
   todo: Todo;
   isLoading?: boolean;
-  onRemoveTodo?: (todoId: number) => Promise<void>; // ✅ `onRemoveTodo` тепер необов'язковий
+  onRemoveTodo?: (todoId: number) => Promise<void>;
 };
 
 export const TodoItem: React.FC<Props> = ({
@@ -18,7 +18,7 @@ export const TodoItem: React.FC<Props> = ({
 }) => {
   return (
     <div
-      ref={nodeRef} // Передаємо ref у кореневий div (якщо є)
+      ref={nodeRef}
       data-cy="Todo"
       className={classNames('todo', { completed: todo.completed })}
     >
@@ -39,7 +39,7 @@ export const TodoItem: React.FC<Props> = ({
         type="button"
         className="todo__remove"
         data-cy="TodoDelete"
-        onClick={() => onRemoveTodo && onRemoveTodo(todo.id)} // ✅ Викликаємо лише якщо `onRemoveTodo` існує
+        onClick={() => onRemoveTodo && onRemoveTodo(todo.id)}
       >
         ×
       </button>

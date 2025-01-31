@@ -35,8 +35,8 @@ export const TodoList: React.FC<Props> = React.memo(function TodoList({
               <TodoItem
                 key={todo.id}
                 todo={todo}
-                onRemoveTodo={() => onDelete(todo.id)} // ✅ Замінено на `onDelete`
-                isLoading={processing.includes(todo.id)} // ✅ Використовуємо `processing`, а не `loadingTodoIds`
+                onRemoveTodo={() => onDelete(todo.id)}
+                isLoading={processing.includes(todo.id)}
               />
             </CSSTransition>
           );
@@ -52,7 +52,7 @@ export const TodoList: React.FC<Props> = React.memo(function TodoList({
               nodeRef={tempNode}
               todo={tempTodo}
               isLoading={true}
-              onRemoveTodo={async () => Promise.resolve()} // ✅ Тепер повертає `Promise<void>`
+              onRemoveTodo={async () => Promise.resolve()}
             />
           </CSSTransition>
         )}
