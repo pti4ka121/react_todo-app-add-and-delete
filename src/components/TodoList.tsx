@@ -1,31 +1,62 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { Todo } from '../types/Todo';
-import { TodoItem } from './TodoItem';
+import { TodoItem } from '../components/TodoItem';
 
-interface TodoListProps {
-  filteredTodos: Todo[];
-  loading: boolean;
-  isActive: number | undefined;
-  onDeleteTodo: (id: number) => void;
-}
+type Props = {
+  todos: Todo[];
+  tempTodo: Todo | null;
+  processing: number[];
+  onDelete: (todoId: number) => Promise<void>;
+};
 
-export const TodoList: React.FC<TodoListProps> = ({
-  filteredTodos,
-  loading,
-  isActive,
-  onDeleteTodo,
-}) => {
+export const TodoList: React.FC<Props> = React.memo(function TodoList({
+  todos,
+  tempTodo,
+  processing,
+  onDelete,
+}) {
+  const tempNode = React.createRef<HTMLDivElement>();
+
   return (
     <section className="todoapp__main" data-cy="TodoList">
-      {filteredTodos.map(todo => (
-        <TodoItem
-          key={todo.id}
-          todo={todo}
-          loading={loading}
-          isActive={isActive}
-          onDeleteTodo={onDeleteTodo}
-        />
-      ))}
+      <TransitionGroup>
+        {todos.map(todo => {
+          const nodeRef = React.createRef<HTMLDivElement>();
+
+          return (
+            <CSSTransition
+              nodeRef={nodeRef}
+              key={todo.id}
+              timeout={1000}
+              classNames="item"
+            >
+              <TodoItem
+                key={todo.id}
+                todo={todo}
+                onRemoveTodo={() => onDelete(todo.id)} // ✅ Замінено на `onDelete`
+                isLoading={processing.includes(todo.id)} // ✅ Використовуємо `processing`, а не `loadingTodoIds`
+              />
+            </CSSTransition>
+          );
+        })}
+
+        {tempTodo && (
+          <CSSTransition
+            nodeRef={tempNode}
+            timeout={1000}
+            classNames="temp-item"
+          >
+            <TodoItem
+              nodeRef={tempNode}
+              todo={tempTodo}
+              isLoading={true}
+              onRemoveTodo={async () => Promise.resolve()} // ✅ Тепер повертає `Promise<void>`
+            />
+          </CSSTransition>
+        )}
+      </TransitionGroup>
     </section>
   );
-};
+});
